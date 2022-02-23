@@ -1,2 +1,3 @@
 rootProject.name = 'itSicherheitProject'
+include 'report'
 
