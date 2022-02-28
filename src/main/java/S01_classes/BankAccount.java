@@ -6,6 +6,7 @@ import BTC_Transaction.TransactionOutput;
 import BTC_Transaction.Wallet;
 
 import java.security.PublicKey;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -26,19 +27,16 @@ public class BankAccount {
     }
 
     public double getBalance(){
-        return this.credit;
-   }
+        return credit;
+    }
 
 
-    public Transaction sendFunds(PublicKey recipient, float amountInBTC) {
-        if (getBalance() < amountInBTC) {
+    public void exchangeEuroToBTC(Wallet walletVictimCl, float amountInBTC) {
+        if (getBalance() < (amountInBTC/0.000019)) {
             System.out.println("#not enough funds to send transaction - transaction discarded");
-            return null;
+        }else{
+            credit-=(amountInBTC/0.000019);
+            walletVictimCl.getBTCFromBankAccount(amountInBTC);
         }
-
-        Transaction transaction = new Transaction(null, recipient, amountInBTC, null);
-        transaction.generateSignature(null);
-        withdraw(amountInBTC/0.000019);
-        return transaction;
     }
 }

@@ -10,9 +10,11 @@ public class Wallet {
     public HashMap<String, TransactionOutput> utx0Map = new HashMap<>();
     private PrivateKey privateKey;
     private PublicKey publicKey;
+    private float btcCreditByBank;
 
     public Wallet() {
         generateKeyPair();
+        this.btcCreditByBank =0;
     }
 
     public void generateKeyPair() {
@@ -42,7 +44,7 @@ public class Wallet {
             }
         }
 
-        return total;
+        return (total+btcCreditByBank);
     }
 
     public Transaction sendFunds(PublicKey recipient, float value) {
@@ -80,4 +82,9 @@ public class Wallet {
     public PublicKey getPublicKey() {
         return this.publicKey;
     }
+
+    public void getBTCFromBankAccount(float amountInBTC) {
+        this.btcCreditByBank += amountInBTC;
+    }
+
 }

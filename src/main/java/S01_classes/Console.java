@@ -16,18 +16,15 @@ public class Console {
 
     public String evaluateUserInput(String input) {
         switch (input) {
-            case "show balance" -> System.out.println("Dein Befehl war show balance!");
-            case "show recipient" -> System.out.println("Dein Befehl war show recipient ");
-            case "check payment" -> System.out.println("Dein Befehl war check payment");
-            case "launch http://www.trust-me.mcg/report.jar" -> System.out.println("Dein Befehl war launch http://www.trust-me.mcg/report.jar");
-            case "exit" -> System.out.println("Dein Befehl war exit");
+            case "show balance", "show recipient", "check payment", "launch http://www.trust-me.mcg/report.jar", "exit" -> {
+                return input;
+            }
             default -> {
-                Pattern patternForExchange = Pattern.compile("exchange [0-9]* BTC");
-                Pattern patternForPayment = Pattern.compile("pay [0-9]* BTC to [0-9]*");
+                Pattern patternForExchange = Pattern.compile("exchange [0-9]*.[0-9]* BTC");
+                Pattern patternForPayment = Pattern.compile("pay [0-9]*.[0-9]* BTC to [0-9]*");
                 Matcher matcherForExchange = patternForExchange.matcher(input);
                 Matcher matcherForPayment = patternForPayment.matcher(input);
                 if (matcherForExchange.matches() || matcherForPayment.matches()) {
-                    System.out.println("Dein Befehl war: " + input);
                     return input;
                 } else {
                     System.out.println("Your command is not valid! Please enter a new one.");
@@ -36,7 +33,6 @@ public class Console {
                 }
             }
         }
-        return input;
     }
 
     public String readUserInput() throws IOException {
