@@ -1,9 +1,8 @@
-import BTC_Transaction.Transaction;
-import BTC_Transaction.TransactionInput;
 import BTC_Transaction.Wallet;
 import S01_classes.BankAccount;
 import S01_classes.Console;
 import S01_classes.ReportJarConfiguration;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,22 +10,33 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.PublicKey;
+import java.security.Security;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class S01_ConsoleApplication implements Runnable {
-    Console console;
-    Object port;
-    Object instance;
-    Method method;
-    Class report;
-    Wallet walletVictimCl;
-    Wallet walletAttackerEd;
-    BankAccount bankAccountVictimCl;
+public class S01_ConsoleApplication{
+    private  Console console;
+    private  Object port;
+    private  Object instance;
+    private  Method method;
+    private  Class report;
+    private  Wallet walletVictimCL ;
+    private  Wallet walletAttackerEd;
+    BankAccount bankAccountVictimCL;
 
-    public void run() {
+    private S01_ConsoleApplication(){
+        Security.addProvider(new BouncyCastleProvider());
         this.console = new Console();
-        String userInput = null;
+        this.walletVictimCL = new Wallet();
+        this.walletAttackerEd = new Wallet();
+        this.bankAccountVictimCL = new BankAccount("Clue Less", 5000.00);
+        checkTerminalInput();
+    }
+    public static void main(String[] args) {
+        new S01_ConsoleApplication();
+    }
+    public void checkTerminalInput(){
+        String userInput="noValidCommand";
         console.terminalWelcoming();
         do {
             do {
@@ -41,25 +51,16 @@ public class S01_ConsoleApplication implements Runnable {
         console.terminalGoodbye();
     }
 
-   /* public static void main(String[] args) {
-        Security.addProvider(new BouncyCastleProvider());
-        Wallet walletVictimCL = new Wallet();
-        Wallet walletAttackerEd = new Wallet();
-        String terminalInput;
-        BankAccount bankAccountCL = new BankAccount("Clue Less", 5000.00);
-        new S01_ConsoleApplication();
-    }*/
-
     public void executeUserCommand(String userInput){
         switch (userInput) {
             case "show balance":
-                showBalance(walletVictimCl, bankAccountVictimCl);
+                showBalance(walletVictimCL, bankAccountVictimCL);
                 break;
             case "show recipient":
                 showRecipient();
                 break;
             case "check payment":
-               checkPayment(walletAttackerEd);
+                checkPayment(walletAttackerEd);
                 break;
             case "launch http://www.trust-me.mcg/report.jar":
                 launchJarEncrypt();
@@ -67,16 +68,16 @@ public class S01_ConsoleApplication implements Runnable {
             case "exit":
                 break;
             default:
-                Pattern patternForExchange = Pattern.compile("exchange [0-9]* BTC");
-                Pattern patternForPayment= Pattern.compile("pay [0-9]* BTC to [0-9]*");
+                Pattern patternForExchange = Pattern.compile("exchange [0-9]*.[0-9]* BTC");
+                Pattern patternForPayment= Pattern.compile("pay [0-9]*.[0-9]* BTC to [0-9]*");
                 Matcher matcherForExchange = patternForExchange.matcher(userInput);
                 Matcher matcherForPayment = patternForPayment.matcher(userInput);
                 if(matcherForExchange.matches()) {
-                    exchangeAmount(bankAccountVictimCl,walletVictimCl,(float)0.02755);
+                    exchangeAmount(bankAccountVictimCL,walletVictimCL,(float)0.02755);
                     break;
                 }
                 else if(matcherForPayment.matches() ){
-                    payAmountToAddress(walletAttackerEd.getPublicKey(),walletVictimCl,(float)0.02755);
+                    payAmountToAddress(walletAttackerEd.getPublicKey(),walletVictimCL,(float)0.02755);
                 }
         }
     }
@@ -85,36 +86,32 @@ public class S01_ConsoleApplication implements Runnable {
         walletVictimCl.sendFunds(addressReceiver, amount);
     }
 
-    private void exchangeAmount(BankAccount bankAccountVictimCl, Wallet walletVictimCl, float amountInBTC) {
-        bankAccountVictimCl.sendFunds(walletVictimCl.getPublicKey(),amountInBTC );
+    private static void exchangeAmount(BankAccount bankAccountVictimCl, Wallet walletVictimCl, float amountInBTC) {
+        bankAccountVictimCl.exchangeEuroToBTC(walletVictimCl,amountInBTC );
     }
 
     private void checkPayment(Wallet walletAttackerEd) {
-        try {
-            float credit = walletAttackerEd.getBalance();
-            method = port.getClass().getMethod("decrypt",float.class);
-            method.invoke(port,credit);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if(blockchainEvaluation()){
+            System.out.println("successful");
+            launchJarDecrypt();
+
+        }else System.out.println("unsuccessful");
     }
 
     private void showRecipient() {
-        try {
-            method = port.getClass().getMethod("showRecipientAddress");
-            method.invoke(port);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        System.out.println("---------------------------------");
+        System.out.println("Please transfer the BTC to the wallet with the address: "+ walletAttackerEd.getPublicKey());
+        System.out.println("---------------------------------");
     }
 
-    private void showBalance(Wallet walletVictimCl, BankAccount bankAccountVictimCl) {
-        System.out.println("Current BTC-balance in wallet: " + walletVictimCl.getBalance());
-        System.out.println("Current BankAccount-balance: " + bankAccountVictimCl.getBalance());
+    private static void showBalance(Wallet walletVictimCl, BankAccount bankAccountVictimCl) {
+        System.out.println("---------------------------------");
+        System.out.println("Current BTC-balance in wallet: " + walletVictimCl.getBalance()+" BTC");
+        System.out.printf("Current BankAccount-balance: %.2f Euro\n", bankAccountVictimCl.getBalance());
+        System.out.println("---------------------------------");
     }
 
     public void launchJarEncrypt(){
-        System.out.println("test");
         try {
             URL[] urls = {new File(ReportJarConfiguration.instance.subFolderPathOfJavaArchive).toURI().toURL()};
             URLClassLoader urlClassLoader = new URLClassLoader(urls, S01_ConsoleApplication.class.getClassLoader());
@@ -124,23 +121,24 @@ public class S01_ConsoleApplication implements Runnable {
             method = port.getClass().getMethod("encrypt");
             method.invoke(port);
         } catch (Exception e) {
-            System.out.println("test failed");
             e.printStackTrace();
         }
-        System.out.println("---------------------------------");
-        System.out.println("„Oops, your files have been encrypted. With a payment of 0.02755 BTC all\n" +
-                "files will be decrypted.");
-        System.out.println("---------------------------------");
     }
     public void launchJarDecrypt() {
         System.out.println("test2");
-            try {
-                method = port.getClass().getMethod("decrypt");
-                method.invoke(port);
-            } catch (Exception e) {
-                System.out.println("test2 failed");
-                e.printStackTrace();
-            }
+        try {
+            method = port.getClass().getMethod("decrypt");
+            method.invoke(port);
+        } catch (Exception e) {
+            System.out.println("test2 failed");
+            e.printStackTrace();
         }
+    }
+    public boolean blockchainEvaluation(){
+        boolean validBlockchain = true;
+        //here needs to be checked with the help of task S02 if blockchain is valid
+        // true initialization needs to be removed
+        return validBlockchain;
+    }
 
 }
