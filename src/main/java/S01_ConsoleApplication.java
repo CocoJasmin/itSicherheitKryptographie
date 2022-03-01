@@ -1,6 +1,5 @@
-import BTC_Transaction.BTCConfigurations;
-import BTC_Transaction.StringUtility;
-import BTC_Transaction.Wallet;
+import BTCTransaction.BTCConfigurations;
+import BTCTransaction.Wallet;
 import S01_classes.BankAccount;
 import S01_classes.Console;
 import S01_classes.ReportJarConfiguration;
@@ -92,6 +91,31 @@ public class S01_ConsoleApplication{
                 }
         }
     }
+
+    private void exchangeAmount(float amountInBTC) {
+        bankAccountVictimCL.exchangeEuroToBTC(walletVictimCL,amountInBTC );
+    }
+    private void showBalance() {
+        System.out.println("---------------------------------");
+        System.out.println("Current BTC-balance in wallet: " + walletVictimCL.getBalance()+" BTC");
+        System.out.printf("Current BankAccount-balance: %.2f Euro\n", bankAccountVictimCL.getBalance());
+        System.out.println("---------------------------------");
+    }
+
+    private void showRecipient() {
+        if (dataEncrypted) {
+            try {
+                method = port.getClass().getMethod("getPublicKeyAttacker");
+                method.invoke(port);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else System.out.println("No one wants your money! (so far....)");
+    }
+    private void payAmountToAddress(float amount, String addressReceiver) {
+        configurationForTransactions.transferBTC(walletVictimCL,stringToPublicKey(addressReceiver),amount);
+        System.out.println("New balance on the recipient's Wallet: " + walletAttackerEd.getBalance()+" BTC");
+    }
     private PublicKey stringToPublicKey(String keyAsString){
         try{
             byte[] kStringInBytes = Base64.getDecoder().decode(keyAsString.getBytes());
@@ -105,41 +129,14 @@ public class S01_ConsoleApplication{
         return null;
     }
 
-    private void payAmountToAddress(float amount, String addressReceiver) {
-        configurationForTransactions.transferBTC(walletVictimCL,stringToPublicKey(addressReceiver),amount);
-        System.out.println("New balance on the recipient's Wallet: " + walletAttackerEd.getBalance()+" BTC");
-    }
-
-
-    private void exchangeAmount(float amountInBTC) {
-        bankAccountVictimCL.exchangeEuroToBTC(walletVictimCL,amountInBTC );
-    }
-
     private void checkPayment() {
-        if(blockchainEvaluation()){
+        if(BTCConfigurations.isChainValid()){
             System.out.println("successful");
             launchJarDecrypt();
 
         }else System.out.println("unsuccessful");
     }
 
-    private void showRecipient() {
-        if (dataEncrypted) {
-            try {
-                method = port.getClass().getMethod("getPublicKeyAttacker");
-                method.invoke(port);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else System.out.println("No one wants your money! (so far....)");
-    }
-
-    private void showBalance() {
-        System.out.println("---------------------------------");
-        System.out.println("Current BTC-balance in wallet: " + walletVictimCL.getBalance()+" BTC");
-        System.out.printf("Current BankAccount-balance: %.2f Euro\n", bankAccountVictimCL.getBalance());
-        System.out.println("---------------------------------");
-    }
     public void configureReportJar(){
         try {
         URL[] urls = {new File(ReportJarConfiguration.instance.subFolderPathOfJavaArchive).toURI().toURL()};
@@ -173,12 +170,6 @@ public class S01_ConsoleApplication{
                 e.printStackTrace();
             }
         }
-    }
-    public boolean blockchainEvaluation(){
-        boolean validBlockchain = true;
-        //here needs to be checked with the help of task S02 if blockchain is valid
-        // true initialization needs to be removed
-        return validBlockchain;
     }
 
 }

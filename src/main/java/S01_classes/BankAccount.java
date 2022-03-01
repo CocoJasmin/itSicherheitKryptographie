@@ -1,14 +1,6 @@
 package S01_classes;
 
-import BTC_Transaction.Transaction;
-import BTC_Transaction.TransactionInput;
-import BTC_Transaction.TransactionOutput;
-import BTC_Transaction.Wallet;
-
-import java.security.PublicKey;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Map;
+import BTCTransaction.Wallet;
 
 public class BankAccount {
     String userName;

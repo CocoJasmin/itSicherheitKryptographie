@@ -1,4 +1,4 @@
-package BTC_Transaction;
+package BTCTransaction;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
@@ -40,7 +40,7 @@ public class BTCConfigurations {
         addBlock(block);
     }
 
-    public static void isChainValid() {
+    public static boolean isChainValid() {
         Block currentBlock;
         Block previousBlock;
         String hashTarget = StringUtility.getDifficultyString(Configuration.instance.difficulty);
@@ -53,17 +53,17 @@ public class BTCConfigurations {
 
             if (!currentBlock.getHash().equals(currentBlock.calculateHash())) {
                 System.out.println("#current hashes not equal");
-                return;
+                return false;
             }
 
             if (!previousBlock.getHash().equals(currentBlock.getPreviousHash())) {
                 System.out.println("#trevious hashes not equal");
-                return;
+                return false;
             }
 
             if (!currentBlock.getHash().substring(0, Configuration.instance.difficulty).equals(hashTarget)) {
                 System.out.println("#block not mined");
-                return;
+                return false;
             }
 
             TransactionOutput tempOutput;
@@ -72,12 +72,12 @@ public class BTCConfigurations {
 
                 if (currentTransaction.verifySignature()) {
                     System.out.println("#Signature on Transaction(" + t + ") is Invalid");
-                    return;
+                    return false;
                 }
 
                 if (currentTransaction.getInputsValue() != currentTransaction.getOutputsValue()) {
                     System.out.println("#Inputs are not equal to oututs on Transaction(" + t + ")");
-                    return;
+                    return false;
                 }
 
                 for (TransactionInput input : currentTransaction.getInputs()) {
@@ -85,12 +85,12 @@ public class BTCConfigurations {
 
                     if (tempOutput == null) {
                         System.out.println("#referenced input on transaction(" + t + ") is missing");
-                        return;
+                        return false;
                     }
 
                     if (input.getUTX0().getValue() != tempOutput.getValue()) {
                         System.out.println("#referenced input on transaction(" + t + ") value invalid");
-                        return;
+                        return false;
                     }
 
                     tempUTXOs.remove(input.getId());
@@ -102,16 +102,17 @@ public class BTCConfigurations {
 
                 if (currentTransaction.getOutputs().get(0).getRecipient() != currentTransaction.getRecipient()) {
                     System.out.println("#transaction(" + t + ") output recipient is invalid");
-                    return;
+                    return false;
                 }
 
                 if (currentTransaction.getOutputs().get(1).getRecipient() != currentTransaction.getSender()) {
                     System.out.println("#transaction(" + t + ") output 'change' is not sender");
-                    return;
+                    return false;
                 }
             }
         }
         System.out.println("blockchain valid");
+        return true;
     }
 
     public static void addBlock(Block newBlock) {

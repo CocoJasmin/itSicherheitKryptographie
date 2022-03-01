@@ -1,4 +1,4 @@
-package BTC_Transaction;
+package BTCTransaction;
 
 
 public class TransactionInput {

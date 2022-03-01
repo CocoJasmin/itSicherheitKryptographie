@@ -1,4 +1,4 @@
-package BTC_Transaction;
+package BTCTransaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
