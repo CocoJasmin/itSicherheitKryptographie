@@ -1,4 +1,4 @@
-package BTCTransaction;
+package S02_BlockchainClasses;
 
 
 public class TransactionInput {

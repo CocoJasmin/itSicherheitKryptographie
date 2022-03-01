@@ -1,4 +1,4 @@
-package BTCTransaction;
+package S02_BlockchainClasses;
 
 import java.security.*;
 import java.security.spec.ECGenParameterSpec;

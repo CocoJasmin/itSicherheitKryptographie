@@ -1,4 +1,4 @@
-package S01_classes;
+package S01_ConsoleClasses;
 
 public enum ReportJarConfiguration {
     instance;

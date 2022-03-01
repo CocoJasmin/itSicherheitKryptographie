@@ -1,4 +1,4 @@
-package S01_classes;
+package S01_ConsoleClasses;
 
 import java.io.BufferedReader;
 import java.io.IOException;

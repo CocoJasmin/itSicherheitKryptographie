@@ -1,6 +1,6 @@
-package S01_classes;
+package S01_ConsoleClasses;
 
-import BTCTransaction.Wallet;
+import S02_BlockchainClasses.Wallet;
 
 public class BankAccount {
     String userName;
@@ -29,6 +29,7 @@ public class BankAccount {
         }else{
             credit-=(amountInBTC/0.000019);
             walletVictimCl.getBTCFromBankAccount(amountInBTC);
+            System.out.println("transaction - transaction completed");
         }
     }
 }

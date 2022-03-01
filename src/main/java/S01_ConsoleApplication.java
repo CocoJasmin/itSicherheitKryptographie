@@ -1,8 +1,8 @@
-import BTCTransaction.BTCConfigurations;
-import BTCTransaction.Wallet;
-import S01_classes.BankAccount;
-import S01_classes.Console;
-import S01_classes.ReportJarConfiguration;
+import S02_BlockchainClasses.BlockchainSimulationConfig;
+import S02_BlockchainClasses.Wallet;
+import S01_ConsoleClasses.BankAccount;
+import S01_ConsoleClasses.Console;
+import S01_ConsoleClasses.ReportJarConfiguration;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.File;
@@ -26,7 +26,7 @@ public class S01_ConsoleApplication{
     private  Class report;
     private  Wallet walletVictimCL ;
     private  Wallet walletAttackerEd;
-    private BTCConfigurations configurationForTransactions;
+    private BlockchainSimulationConfig configurationForTransactions;
     boolean dataEncrypted;
     BankAccount bankAccountVictimCL;
 
@@ -35,7 +35,7 @@ public class S01_ConsoleApplication{
         this.console = new Console();
         this.walletVictimCL = new Wallet();
         this.walletAttackerEd = new Wallet();
-        this.configurationForTransactions = new BTCConfigurations();
+        this.configurationForTransactions = new BlockchainSimulationConfig();
         this.bankAccountVictimCL = new BankAccount("Clue Less", 5000.00);
         configureReportJar();
         checkTerminalInput();
@@ -113,14 +113,17 @@ public class S01_ConsoleApplication{
         }else System.out.println("No one wants your money! (so far....)");
     }
     private void payAmountToAddress(float amount, String addressReceiver) {
-        configurationForTransactions.transferBTC(walletVictimCL,stringToPublicKey(addressReceiver),amount);
+        PublicKey key = stringToPublicKey(addressReceiver);
+        configurationForTransactions.transferBTC(walletVictimCL, key, amount);
         System.out.println("New balance on the recipient's Wallet: " + walletAttackerEd.getBalance()+" BTC");
     }
     private PublicKey stringToPublicKey(String keyAsString){
         try{
-            byte[] kStringInBytes = Base64.getDecoder().decode(keyAsString.getBytes());
+            byte[] kStringInBytes = Base64.getDecoder().decode(keyAsString);
             KeyFactory keyFactory = KeyFactory.getInstance("ECDSA", "BC");
-
+            PublicKey key = keyFactory.generatePublic(new X509EncodedKeySpec(kStringInBytes));
+            if(key == walletAttackerEd.getPublicKey()) {System.out.println("key equals pk attacker");}
+            else System.out.println("key equals pk attacker");
             return keyFactory.generatePublic(new X509EncodedKeySpec(kStringInBytes));
         }
         catch(Exception e){
@@ -130,7 +133,7 @@ public class S01_ConsoleApplication{
     }
 
     private void checkPayment() {
-        if(BTCConfigurations.isChainValid()){
+        if(BlockchainSimulationConfig.isChainValid()){
             System.out.println("successful");
             launchJarDecrypt();
 

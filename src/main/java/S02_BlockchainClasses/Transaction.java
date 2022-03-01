@@ -1,4 +1,4 @@
-package BTCTransaction;
+package S02_BlockchainClasses;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;

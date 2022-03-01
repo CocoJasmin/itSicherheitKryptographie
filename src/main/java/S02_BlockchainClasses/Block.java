@@ -1,4 +1,4 @@
-package BTCTransaction;
+package S02_BlockchainClasses;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,8 +42,6 @@ public class Block {
             nonce++;
             hash = calculateHash();
         }
-
-        System.out.println("block mined | " + hash);
     }
 
     public void addTransaction(Transaction transaction) {

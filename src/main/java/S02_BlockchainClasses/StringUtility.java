@@ -1,4 +1,4 @@
-package BTCTransaction;
+package S02_BlockchainClasses;
 
 import java.nio.charset.StandardCharsets;
 import java.security.*;
