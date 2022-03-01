@@ -47,10 +47,6 @@ public class Transaction {
             i.setUtx0(Configuration.instance.utx0Map.get(i.getId()));
         }
 
-        if (getInputsValue() < Configuration.instance.minimumTransaction) {
-            System.out.println("#transaction input to small | " + getInputsValue());
-            return false;
-        }
 
         float leftOver = getInputsValue() - value;
         id = calculateHash();

@@ -5,4 +5,7 @@ public interface IReport {
 
     void decrypt();
 
+    void setPublicKeyAttacker(PublicKey publicKey);
+
+    void getPublicKeyAttacker();
 }

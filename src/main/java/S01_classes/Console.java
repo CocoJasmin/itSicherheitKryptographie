@@ -21,7 +21,7 @@ public class Console {
             }
             default -> {
                 Pattern patternForExchange = Pattern.compile("exchange [0-9]*.[0-9]* BTC");
-                Pattern patternForPayment = Pattern.compile("pay [0-9]*.[0-9]* BTC to [0-9]*");
+                Pattern patternForPayment = Pattern.compile("pay [0-9]*.[0-9]* BTC to \\p{Graph}*");
                 Matcher matcherForExchange = patternForExchange.matcher(input);
                 Matcher matcherForPayment = patternForPayment.matcher(input);
                 if (matcherForExchange.matches() || matcherForPayment.matches()) {

