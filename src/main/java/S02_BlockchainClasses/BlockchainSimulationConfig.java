@@ -126,6 +126,10 @@ public class BlockchainSimulationConfig {
     }
 
     public void transferBTC(Wallet walletSender, PublicKey addressReceiver, float amount) {
+        if (walletSender.getBalance() < amount) {
+            System.out.println("transaction discarded - not enough funds to send transaction");
+            return;
+        }
         int currentBlockIndex = Configuration.instance.blockchain.size() - 1;
         Block currentBlock = Configuration.instance.blockchain.get(currentBlockIndex);
         Block block01 = new Block(currentBlock.getHash());

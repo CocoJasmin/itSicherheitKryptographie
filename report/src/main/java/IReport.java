@@ -10,4 +10,9 @@ public interface IReport {
     void setPublicKeyAttacker(PublicKey publicKey);
 
     void showReceiverAttacker();
+
+    //for Task S03
+    float getRansomAmountAttacker();
+
+    float updateRansomAmountAttacker(float alreadyPayed);
 }

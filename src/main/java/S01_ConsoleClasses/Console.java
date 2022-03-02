@@ -42,6 +42,7 @@ public class Console {
         System.out.print("Enter your command: ");
         String userInput = reader.readLine();
         System.out.println("Your command was: " + userInput);
+        System.out.println("---------------------------------");
         return userInput;
     }
 
@@ -59,7 +60,7 @@ public class Console {
     }
 
     public void terminalGoodbye() {
-        System.out.println("The operation has been terminated!");
+        System.out.println("The Terminal has been terminated!");
         System.out.println("Goodbye!");
     }
 }
