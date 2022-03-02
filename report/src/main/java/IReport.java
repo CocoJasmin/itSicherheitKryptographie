@@ -5,7 +5,9 @@ public interface IReport {
 
     void decrypt();
 
+    String getPublicKeyAttacker();
+
     void setPublicKeyAttacker(PublicKey publicKey);
 
-    void getPublicKeyAttacker();
+    void showReceiverAttacker();
 }

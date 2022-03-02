@@ -14,7 +14,7 @@ public class Wallet {
 
     public Wallet() {
         generateKeyPair();
-        this.btcCreditByBank =0;
+        this.btcCreditByBank = 0;
     }
 
     public void generateKeyPair() {
@@ -44,7 +44,7 @@ public class Wallet {
             }
         }
 
-        return (total+btcCreditByBank);
+        return (total + btcCreditByBank);
     }
 
     public Transaction sendFunds(PublicKey recipient, float value) {

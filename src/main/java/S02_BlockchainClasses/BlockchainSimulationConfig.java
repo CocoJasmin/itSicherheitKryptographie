@@ -7,12 +7,14 @@ import java.security.Security;
 import java.util.HashMap;
 
 public class BlockchainSimulationConfig {
+    Wallet walletA;
+    Wallet walletB;
+    Wallet satoshiNakamotoWallet;
     Block genesisBlock;
     Wallet helpWalletForConfig;
     Wallet satoshiNakamoto;
-    HashMap <String, Wallet> miners;
+    HashMap<String, Wallet> miners;
 
-    int blockCount =-1;
     public BlockchainSimulationConfig() {
         Security.addProvider(new BouncyCastleProvider());
         helpWalletForConfig = new Wallet();
@@ -22,10 +24,13 @@ public class BlockchainSimulationConfig {
         miners.put("Bob", new Wallet());
         miners.put("Eve", new Wallet());
         miners.put("Sam", new Wallet());
+        walletA = new Wallet();
+        walletB = new Wallet();
+        Wallet WalletC = new Wallet();
+        satoshiNakamotoWallet = new Wallet();
 
-        //create genesis-transaction (1BTC) with the help of Satoshi Nakamoto's Wallet
-        Configuration.instance.genesisTransaction = new Transaction(satoshiNakamoto.getPublicKey(), helpWalletForConfig.getPublicKey(), 1f, null);
-        Configuration.instance.genesisTransaction.generateSignature(satoshiNakamoto.getPrivateKey());
+        Configuration.instance.genesisTransaction = new Transaction(satoshiNakamotoWallet.getPublicKey(), WalletC.getPublicKey(), 1f, null);
+        Configuration.instance.genesisTransaction.generateSignature(satoshiNakamotoWallet.getPrivateKey());
         Configuration.instance.genesisTransaction.setId("0");
         Configuration.instance.genesisTransaction.getOutputs().add(
                 new TransactionOutput(Configuration.instance.genesisTransaction.getRecipient(),
@@ -36,21 +41,13 @@ public class BlockchainSimulationConfig {
                 Configuration.instance.genesisTransaction.getOutputs().get(0).getID(),
                 Configuration.instance.genesisTransaction.getOutputs().get(0));
 
-        System.out.println("creating and mining genesis block");
         genesisBlock = new Block("0");
         genesisBlock.addTransaction(Configuration.instance.genesisTransaction);
         addBlock(genesisBlock);
-
-
     }
 
-    public void transferBTC(Wallet walletSender, PublicKey addressReceiver, float amount){
-        Block currentBlock;
-        int currentBlockIndex = Configuration.instance.blockchain.size()-1;
-        currentBlock = Configuration.instance.blockchain.get(currentBlockIndex);
-        Block block01 = new Block(currentBlock.getHash());
-        block01.addTransaction(walletSender.sendFunds(addressReceiver, amount));
-        addBlock(block01);
+    public static void main(String... args) {
+        new BlockchainSimulationConfig();
     }
 
     public static boolean isChainValid() {
@@ -128,8 +125,19 @@ public class BlockchainSimulationConfig {
         return true;
     }
 
-    public void addBlock(Block newBlock) {
+    public void transferBTC(Wallet walletSender, PublicKey addressReceiver, float amount) {
+        int currentBlockIndex = Configuration.instance.blockchain.size() - 1;
+        Block currentBlock = Configuration.instance.blockchain.get(currentBlockIndex);
+        Block block01 = new Block(currentBlock.getHash());
+        block01.addTransaction(walletSender.sendFunds(addressReceiver, amount));
+        addBlock(block01);
+    }
 
-        PoW.selectRandomMiner(miners,newBlock);
+    public void addBlock(Block newBlock) {
+        newBlock.mineBlock(Configuration.instance.difficulty);
+        Configuration.instance.blockchain.add(newBlock);
+        if (!newBlock.equals(genesisBlock)) {
+            PoW.selectRandomMiner(miners);
+        }
     }
 }
