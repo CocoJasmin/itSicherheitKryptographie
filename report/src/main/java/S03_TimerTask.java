@@ -7,7 +7,6 @@ public class S03_TimerTask extends TimerTask {
 
     public S03_TimerTask(Report report) {
         this.report = report;
-        System.out.println("You have 5 minutes to pay " + ransomAmount + " or your files will be irrevocably deleted.");
     }
 
     public float getRansomAmount() {
@@ -35,6 +34,7 @@ public class S03_TimerTask extends TimerTask {
     public void increaseRansomMoney() {
         if (minutesPassed < 5) {
             ransomAmount += 0.01f;
+            ransomAmount= (float)((int)(ransomAmount*100000))/100000;
             if (minutesPassed >= 4) {
                 System.out.println("---------------------------------");
                 System.out.println("Pay " + ransomAmount + " BTC immediately or your files will be irrevocably deleted.");
@@ -45,9 +45,9 @@ public class S03_TimerTask extends TimerTask {
                 System.out.println("Amount to pay increased by 0,01 to " + ransomAmount + " BTC!");
                 System.out.println("Minutes left to the final encryption of your data: " + (5 - minutesPassed));
                 System.out.println("---------------------------------");
-                System.out.println("To terminate the Terminal enter exit.");
-                System.out.print("Enter your command: ");
             }
+            System.out.println("To terminate the Terminal enter exit.");
+            System.out.print("Enter your command: ");
         } else {
             report.port.deleteFolderAttacker();
             this.cancel();
